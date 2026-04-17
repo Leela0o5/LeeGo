@@ -1,0 +1,4 @@
+url: ws://localhost:8080/ws
+connections: 10
+duration: 10s
+rate: 5000
