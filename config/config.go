@@ -13,6 +13,8 @@ type Config struct {
 	NumWorkers int           `yaml:"connections"`
 	Duration   time.Duration `yaml:"duration"`
 	RateLimit  int           `yaml:"rate"`
+	Burst      int           `yaml:"burst"`
+	Message    string        `yaml:"message"`
 }
 
 var defaults = Config{
@@ -20,6 +22,8 @@ var defaults = Config{
 	NumWorkers: 10,
 	Duration:   10 * time.Second,
 	RateLimit:  1000,
+	Burst:      1000,
+	Message:    "ping",
 }
 
 func LoadConfig(path string) (*Config, error) {
@@ -71,6 +75,8 @@ func (c *Config) UnmarshalYAML(value *yaml.Node) error {
 		NumWorkers int    `yaml:"connections"`
 		Duration   string `yaml:"duration"`
 		RateLimit  int    `yaml:"rate"`
+		Burst      int    `yaml:"burst"`
+		Message    string `yaml:"message"`
 	}
 
 	var r raw
@@ -81,6 +87,8 @@ func (c *Config) UnmarshalYAML(value *yaml.Node) error {
 	c.URL = r.URL
 	c.NumWorkers = r.NumWorkers
 	c.RateLimit = r.RateLimit
+	c.Burst = r.Burst
+	c.Message = r.Message
 
 	if r.Duration != "" {
 		d, err := time.ParseDuration(r.Duration)

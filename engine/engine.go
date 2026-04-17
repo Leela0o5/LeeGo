@@ -15,7 +15,7 @@ func Run(cfg config.Config) *metrics.Stats {
 	if rate <= 0 {
 		rate = cfg.NumWorkers * 1000
 	}
-	rl := NewRateLimiter(ctx, rate)
+	rl := NewRateLimiter(ctx, rate, cfg.Burst)
 
 	stats := metrics.NewStats()
 	results := make(chan metrics.Result, cfg.NumWorkers*10)
@@ -40,7 +40,7 @@ func Run(cfg config.Config) *metrics.Stats {
 		workerID := i
 		go func() {
 			defer wg.Done()
-			Worker(ctx, workerID, cfg.URL, rl, results)
+			Worker(ctx, workerID, cfg.URL, cfg.Message, rl, results)
 		}()
 	}
 

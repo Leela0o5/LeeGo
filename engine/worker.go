@@ -8,7 +8,7 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-func Worker(ctx context.Context, id int, url string, rl *RateLimiter, results chan<- metrics.Result) {
+func Worker(ctx context.Context, id int, url string, message string, rl *RateLimiter, results chan<- metrics.Result) {
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
 		results <- metrics.Result{Err: err}
@@ -37,7 +37,7 @@ func Worker(ctx context.Context, id int, url string, rl *RateLimiter, results ch
 
 		start := time.Now()
 
-		err := conn.WriteMessage(websocket.TextMessage, []byte("ping"))
+		err := conn.WriteMessage(websocket.TextMessage, []byte(message))
 		if err != nil {
 			results <- metrics.Result{
 				Err:       err,

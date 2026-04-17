@@ -1,15 +1,9 @@
 package main
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/Leela0o5/WebSocket-Load-Tester/cli"
 )
 
 func main() {
-	if err := cli.Run(); err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
-	}
+	cli.Execute()
 }

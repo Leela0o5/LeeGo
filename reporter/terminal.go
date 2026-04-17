@@ -2,16 +2,21 @@ package reporter
 
 import (
 	"fmt"
+	"time"
 	"github.com/Leela0o5/WebSocket-Load-Tester/metrics"
 )
 
 func PrintSummary(s *metrics.Stats) {
-	avg := s.Average()
-	p95 := s.P95()
+	printData(s.TotalRequests, s.FailureCount, s.Average(), s.P95())
+}
+func PrintReport(r *JSONReport) {
+	printData(r.Total, r.Errors, r.AvgLatency, r.P95)
+}
 
+func printData(total, errors int, avg, p95 time.Duration) {
 	fmt.Println("\n--- BENCHMARK SUMMARY ---")
-	fmt.Printf("Total Requests: %d\n", s.TotalRequests)
-	fmt.Printf("Errors:         %d\n", s.FailureCount)
+	fmt.Printf("Total Requests: %d\n", total)
+	fmt.Printf("Errors:         %d\n", errors)
 	fmt.Printf("Avg Latency:    %v\n", avg)
 	fmt.Printf("P95 Latency:    %v\n", p95)
 	fmt.Println("-------------------------")
