@@ -1,4 +1,4 @@
-# LeeGo: High-Performance WebSocket Load Tester
+# LeeGo: A Minimal WebSocket Load Tester
 
 [![Go Reference](https://pkg.go.dev/badge/github.com/Leela0o5/LeeGo.svg)](https://pkg.go.dev/github.com/Leela0o5/LeeGo)
 [![Go Report Card](https://goreportcard.com/badge/github.com/Leela0o5/LeeGo)](https://goreportcard.com/report/github.com/Leela0o5/LeeGo)
