@@ -33,12 +33,10 @@ func RunAsync(cfg config.Config) (*metrics.Stats, chan struct{}) {
 		collectorDone := make(chan struct{})
 		go func() {
 			for res := range results {
-				stats.TotalRequests++
 				if res.Err != nil {
-					stats.FailureCount++
+					stats.RecordFailure()
 				} else {
-					stats.SuccessCount++
-					stats.Record(res.Latency)
+					stats.RecordSuccess(res.Latency)
 				}
 			}
 			close(collectorDone)

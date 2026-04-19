@@ -52,7 +52,7 @@ func TestEngineIntegration(t *testing.T) {
 		t.Error("Test failed: Engine recorded 0 successful requests")
 	}
 
-	if len(stats.Latencies) == 0 {
+	if stats.Average() <= 0 {
 		t.Error("Test failed: No latencies were recorded")
 	}
 }

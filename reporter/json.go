@@ -16,6 +16,9 @@ type JSONReport struct {
 }
 
 func SaveJSON(s *metrics.Stats, path string) error {
+	s.RLock()
+	defer s.RUnlock()
+
 	report := JSONReport{
 		Total:      s.TotalRequests,
 		Errors:     s.FailureCount,

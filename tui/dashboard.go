@@ -118,6 +118,8 @@ func (m Model) configPanel() string {
 
 func (m Model) statsPanel() string {
 	s := m.stats
+	s.RLock()
+	defer s.RUnlock()
 
 	successRate := 0.0
 	if s.TotalRequests > 0 {
@@ -143,6 +145,8 @@ func (m Model) statsPanel() string {
 
 func (m Model) latencyPanel() string {
 	s := m.stats
+	s.RLock()
+	defer s.RUnlock()
 
 	if s.SuccessCount == 0 {
 		return boxStyle.Render(accentStyle.Render("Latency") + "\n" + dimStyle.Render("  waiting for data..."))

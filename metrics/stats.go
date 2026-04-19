@@ -1,49 +1,64 @@
 package metrics
 
 import (
-	"slices"
+	"sync"
 	"time"
 )
 
 type Stats struct {
+	sync.RWMutex
 	TotalRequests int
 	SuccessCount  int
 	FailureCount  int
-	Latencies     []time.Duration
 	Hist          *Histogram
 }
 
 func NewStats() *Stats {
 	return &Stats{
-		Latencies: make([]time.Duration, 0),
-		Hist:      NewHistogram(),
+		Hist: NewHistogram(),
 	}
 }
 
-func (s *Stats) Record(d time.Duration) {
-	s.Latencies = append(s.Latencies, d)
+func (s *Stats) RecordSuccess(d time.Duration) {
+	s.Lock()
+	defer s.Unlock()
+	s.TotalRequests++
+	s.SuccessCount++
 	s.Hist.Record(d)
 }
 
+func (s *Stats) RecordFailure() {
+	s.Lock()
+	defer s.Unlock()
+	s.TotalRequests++
+	s.FailureCount++
+}
+
 func (s *Stats) Average() time.Duration {
+	s.RLock()
+	defer s.RUnlock()
 	if s.Hist != nil && s.Hist.Count() > 0 {
 		return s.Hist.Mean()
 	}
-	return s.sliceAverage()
+	return 0
 }
 
 func (s *Stats) Min() time.Duration {
+	s.RLock()
+	defer s.RUnlock()
 	if s.Hist != nil && s.Hist.Count() > 0 {
 		return s.Hist.Min()
 	}
-	return s.sliceMin()
+	return 0
 }
 
 func (s *Stats) Max() time.Duration {
+	s.RLock()
+	defer s.RUnlock()
 	if s.Hist != nil && s.Hist.Count() > 0 {
 		return s.Hist.Max()
 	}
-	return s.sliceMax()
+	return 0
 }
 
 func (s *Stats) Median() time.Duration { return s.Percentile(0.50) }
@@ -51,53 +66,10 @@ func (s *Stats) P95() time.Duration    { return s.Percentile(0.95) }
 func (s *Stats) P99() time.Duration    { return s.Percentile(0.99) }
 
 func (s *Stats) Percentile(p float64) time.Duration {
+	s.RLock()
+	defer s.RUnlock()
 	if s.Hist != nil && s.Hist.Count() > 0 {
 		return s.Hist.Percentile(p)
 	}
-	return s.slicePercentile(p)
-}
-
-// --- Slice-based fallbacks (original implementation) ---
-
-func (s *Stats) sliceAverage() time.Duration {
-	if len(s.Latencies) == 0 {
-		return 0
-	}
-	var total time.Duration
-	for _, l := range s.Latencies {
-		total += l
-	}
-	return total / time.Duration(len(s.Latencies))
-}
-
-func (s *Stats) sliceMin() time.Duration {
-	if len(s.Latencies) == 0 {
-		return 0
-	}
-	s.sortLatencies()
-	return s.Latencies[0]
-}
-
-func (s *Stats) sliceMax() time.Duration {
-	if len(s.Latencies) == 0 {
-		return 0
-	}
-	s.sortLatencies()
-	return s.Latencies[len(s.Latencies)-1]
-}
-
-func (s *Stats) slicePercentile(p float64) time.Duration {
-	if len(s.Latencies) == 0 {
-		return 0
-	}
-	s.sortLatencies()
-	idx := int(float64(len(s.Latencies)) * p)
-	if idx >= len(s.Latencies) {
-		idx = len(s.Latencies) - 1
-	}
-	return s.Latencies[idx]
-}
-
-func (s *Stats) sortLatencies() {
-	slices.Sort(s.Latencies)
+	return 0
 }

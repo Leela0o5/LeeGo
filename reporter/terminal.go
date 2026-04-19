@@ -6,6 +6,8 @@ import (
 )
 
 func PrintSummary(s *metrics.Stats) {
+	s.RLock()
+	defer s.RUnlock()
 	printData(s.TotalRequests, s.FailureCount, s.Average(), s.P95())
 }
 func PrintReport(r *JSONReport) {

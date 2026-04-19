@@ -21,6 +21,9 @@ func main() {
 
 	stats := leego.Run(cfg)
 
+	stats.RLock()
+	defer stats.RUnlock()
+
 	fmt.Printf("Test Completed!\n")
 	fmt.Printf("Total Requests: %d\n", stats.TotalRequests)
 	fmt.Printf("Success/Failure: %d/%d\n", stats.SuccessCount, stats.FailureCount)

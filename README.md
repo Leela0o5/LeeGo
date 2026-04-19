@@ -28,6 +28,11 @@ Add it to your project dependencies:
 go get github.com/Leela0o5/LeeGo
 ```
 
+## Performance Profile
+
+- **O(1) Latency Memory:** Raw execution latencies are plotted strictly against an underlying mathematical bucket histogram rather than storing individual scalar entries. This guarantees constant `O(1)` memory overhead regardless of whether you process 10,000 or 10,000,000 connections during a test.
+- **Thread Safety:** The `metrics.Stats` payload is natively protected by a granular `sync.RWMutex`. Reading the metrics directly out of `RunAsync()` (e.g., `stats.RLock()`) mid-test is mathematically concurrency-safe.
+
 ## Usage
 
 ### Library Usage
